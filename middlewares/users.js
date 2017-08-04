@@ -40,6 +40,10 @@ var Users = {
                 return this.list.splice(i, 1)[0];
         }
         return null;
+    },
+
+    countUsers : function () {
+        return this.list.length;
     }
 
 };

@@ -74,6 +74,7 @@ var server = http.createServer(app);
  */
 
 var io = require('socket.io')(server);
+var sockets = io.sockets.sockets;
 
 io.on('connection', function (socket){
     console.log('[SOCKET-IO][NEW] New connection established. Socket : [' + socket.id + ']');
@@ -85,11 +86,36 @@ io.on('connection', function (socket){
         user = users.addUser(msg.id, msg.content);
 
         if (user !== null) {
-            socket.emit('connection.connected', {id: "<0x00>", username: "System", success: true, content: {id: socket.id, username: user.name} } );
+            socket.emit('connection.connected', {
+                id: "<0x00>", username: "System",
+                success: true, content: {
+                    id: socket.id,
+                    username: user.name
+                },
+                numUsers: users.countUsers()
+            });
             console.log('[SOCKET-IO][EVENT][CONNECT] New user connected into T-Chat. User : [' + user.name + ']. Socket : [' + socket.id + ']');
-            io.emit('chat message', {id: "<0x00>", username: "System", content: user.name + ' is now connected'});
+            io.emit('chat.message.public', {
+                id: "<0x00>",
+                username: "System",
+                raw_content: user.name + ' is now connected',
+                parsed_content: user.name + ' is now connected',
+            });
+            socket.broadcast.emit('chat.user.join', {
+                id: "<0x00>",
+                username: "System",
+                content: {
+                    username: user.name,
+                    numUsers: users.countUsers()
+                }
+            });
         } else
-            socket.emit('connection.connected', {id: "<0x00>", username: "System", success: false, content: "Please, try again."});
+            socket.emit('connection.connected', {
+                id: "<0x00>",
+                username: "System",
+                success: false,
+                content: "Please, try again."
+            });
     });
 
     socket.on('chat.typing.start', function (msg) {
@@ -100,8 +126,15 @@ io.on('connection', function (socket){
         socket.broadcast.emit('chat.typing.end', msg);
     });
 
-    socket.on('chat message', function (msg){
-        io.emit('chat message', msg);
+    socket.on('chat.message.public', function (msg) {
+        io.emit('chat.message.public', msg);
+    });
+
+    socket.on('chat.message.private', function (msg) {
+        for (var i = 0, len = msg.targets.length; i < len; ++i) {
+            sockets[msg.targets[i]].emit('chat.message.private', msg);
+        }
+        socket.emit('chat.message.private', msg);
     });
 
     socket.on('disconnect', function (){
@@ -111,7 +144,20 @@ io.on('connection', function (socket){
 
         if (user !== null) {
             console.log('[SOCKET-IO][DESTROY][S] Connection interrupted. User : [' + user.name + ']. Socket : [' + socket.id + '].');
-            io.emit('chat message', {id: "<0x00>", username: "System", content: user.name + ' is now disconnected'});
+            io.emit('chat.message.public', {
+                id: "<0x00>",
+                username: "System",
+                content: user.name + ' is now disconnected',
+                parsed_content: user.name + ' is now disconnected'
+            });
+            socket.broadcast.emit('chat.user.left', {
+                id: "<0x00>",
+                username: "System",
+                content: {
+                    username: user.name,
+                    numUsers: users.countUsers()
+                }
+            });
         } else
             console.log('[SOCKET-IO][DESTROY][F] Connection interrupted but couldn\'t remove user info. Socket : [' + socket.id + ']');
     });

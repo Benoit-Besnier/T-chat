@@ -7,13 +7,14 @@ block content
     div(id="message-block", ng-controller="Messages")
         ul(id="messages", class='messageBox')
         div(id="typing", class='typingTracker')
+            div(class="counter-writers") {{counter}}
             div(class="loading-container")
                 img(class="animated-gif", src="/images/edit_user1600.png")
-            div(class="counter-writers") {{counter}}
+
 
     div(id="bottom-bar", ng-controller="Input")
-        div(id="disconnect", class='button-bb')
-            button() Off
+        div(id="disconnect", class='button-bb', ng-click='disconnect()')
+            i(class="fa fa-power-off square-icon icon-padding-setting-one clickable")
 
         div(id="message-input")
             //md-content(md-theme="custom")
@@ -22,13 +23,13 @@ block content
                 input(ng-model="message.content", autocomplete="off", ng-keyup="inputWatcher($event)")
 
         div(id="emote-button", class='button-bb')
-            button() Emote
+            i(class="fa fa-smile-o square-icon icon-padding-setting-one desactivated")
 
         div(id="take-picture", class='button-bb')
-            button() Picture
+            i(class="fa fa-picture-o square-icon icon-padding-setting-two desactivated")
 
         div(id="join-file", class='button-bb')
-            button() File
+            i(class="fa fa-paperclip square-icon icon-padding-setting-one desactivated")
 
-        div(id="send-button", class='button-bb')
-            button() Send
+        div(id="send-button", class='button-bb', ng-click='sendMessage()')
+            i(class="fa fa-paper-plane square-icon icon-padding-setting-two clickable")

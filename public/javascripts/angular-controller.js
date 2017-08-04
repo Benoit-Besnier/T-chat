@@ -70,8 +70,6 @@ AppController.controller('View', ['$scope', '$mdDialog', '$window', 'socket',
             });
         }
 
-        $scope.showAdvanced();
-
         socket.on('connection.connected', function (msg) {
             if (msg.success) {
                 $scope.user.username = msg.content.username;
@@ -79,6 +77,8 @@ AppController.controller('View', ['$scope', '$mdDialog', '$window', 'socket',
                 // $window.localStorage.user = JSON.stringify($scope.user);
             }
         });
+
+        $scope.showAdvanced();
 
         // init();
     }
@@ -90,12 +90,21 @@ AppController.controller('Menu', ['$scope',
     }
 ]);
 
-AppController.controller('Messages', ['$scope', 'socket', 'msgBus',
-    function ($scope, socket, msgBus) {
+AppController.controller('Messages', ['$scope', 'socket', 'msgBus', 'UserList',
+    function ($scope, socket, msgBus, UserList) {
 
-        socket.on('chat message', function (msg) {
+        socket.on('chat.message.public', function (msg) {
             if ($scope.connected) {
-                msgBus.emitMsg('messageBox.newMessage', {uid: socket.id, msg: msg});
+                UserList.setNewUser(msg.id, msg.username);
+                console.log("New Public Message received");
+                msgBus.emitMsg('messageBox.newPublicMessage', {uid: socket.id, msg: msg});
+            }
+        });
+
+        socket.on('chat.message.private', function (msg) {
+            if ($scope.connected) {
+                console.log("New Private Message received");
+                msgBus.emitMsg('messageBox.newPrivateMessage', {uid: socket.id, msg: msg});
             }
         });
 
@@ -114,24 +123,58 @@ AppController.controller('Messages', ['$scope', 'socket', 'msgBus',
     }
 ]);
 
-AppController.controller('Input', ['$scope', 'socket',
-    function ($scope, socket) {
+AppController.controller('Input', ['$location', '$scope', '$window', 'socket', 'UserList', 'MessageParser',
+    function ($location, $scope, $window, socket, UserList, MessageParser) {
         var message = $scope.message = {
             // Keep check of typing state
             typing  : false,
             timeout : undefined,
             // Data
-            content : ""
+            content : "",
+            parsed_content : "",
+            targets : []
+        };
+
+        $scope.disconnect = function () {
+            $window.localStorage.clear();
+            $window.location.href = '/';
         };
 
         var sendMessage = $scope.sendMessage = function () {
             if (message.content !== "" && $scope.connected) {
-                socket.emit('chat message', {
-                    id      : socket.id,
-                    username: $scope.user.username,
-                    content : message.content
-                });
+                message.parsed_content = MessageParser.parse(message.content);
+                console.log(message.parsed_content);
+                if (MessageParser.isMessagePrivate()) {
+                    var targetsName, t_id;
+
+                    targetsName = MessageParser.getTargets();
+                    console.log(targetsName);
+                    console.log(UserList.getUsers());
+                    for (var i = 0, len = targetsName.length; i < len; ++i) {
+                        t_id = UserList.getUserIdByName(targetsName[i]);
+                        if (t_id != null && t_id != undefined)
+                            message.targets.push(t_id);
+                    }
+                    console.log(message.targets.length);
+                    socket.emit('chat.message.private', {
+                        id              : socket.id,
+                        username        : $scope.user.username,
+                        targets         : message.targets,
+                        raw_content     : message.content,
+                        parsed_content  : message.parsed_content
+                    });
+                } else
+                    socket.emit('chat.message.public', {
+                        id              : socket.id,
+                        username        : $scope.user.username,
+                        raw_content     : message.content,
+                        parsed_content  : message.parsed_content
+                    });
+
                 message.content = "";
+                message.parsed_content = "";
+                message.targets.length = 0;
+                MessageParser.clear();
             }
         };
 
