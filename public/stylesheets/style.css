@@ -1,0 +1,125 @@
+html {
+    overflow: hidden;
+}
+
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font: 13px Helvetica, Arial; }
+
+#messages { list-style-type: none; margin: 0; padding: 0; }
+/*#messages li { padding: 5px 10px; }*/
+/*#messages li:nth-child(odd) { background: rgba(255, 255, 255, 0.50); }*/
+
+/***
+ **
+ ** LEFT-BAR CSS
+ **
+***/
+
+#left-bar {
+    position: absolute;
+    width: 50px;
+    height: 100%;
+
+    background-color: rgba(255, 0, 0, 0.50);
+}
+
+/***
+ **
+ ** MESSAGE-BLOCK CSS
+ **
+***/
+
+#message-block {
+    position: absolute;
+    left: 50px;
+    width: calc(100% - 50px);
+    height: calc(100% - 50px);
+    overflow-y: auto;
+
+    background-color: rgba(0, 255, 0, 0.50);
+}
+
+.message {
+    padding: 12px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 80%;
+}
+
+.message-from-current-user {
+    margin-left: 30px;
+
+    background-color: rgba(255, 255, 255, 0.50);
+}
+
+.message-from-another-user {
+    margin-left: calc(20% - 30px);
+
+    background-color: rgba(0, 255, 0, 0.50);
+}
+
+.message-from-system-user {
+    margin-left: 10%;
+    background-color: rgba(0, 0, 0, 0.50);
+}
+
+/***
+ **
+ ** BOTTOM-BAR CSS
+ **
+***/
+
+#bottom-bar {
+    position: absolute;
+
+    bottom: 0;
+    width: 100%;
+    height: 50px;
+
+    background-color: rgba(0, 0, 255, 0.50);
+}
+#bottom-bar #disconnect {
+    background-color: gray;
+}
+#bottom-bar #message-input {
+    position: relative;
+
+    width: calc(100% - 250px);
+    height: 50px;
+    display: block;
+    float: left;
+
+    background-color: lightpink;
+}
+#bottom-bar #message-input .md-block {
+    margin: 13px 0 !important;
+}
+#bottom-bar #emote-button {
+    background-color: lightgoldenrodyellow;
+}
+#bottom-bar #take-picture {
+    background-color: lightsalmon;
+}
+#bottom-bar #join-file {
+    background-color: lightskyblue;
+}
+#bottom-bar #send-button {
+    background-color: lemonchiffon;
+}
+.button-bb {
+    position: relative;
+
+    width: 50px;
+    height: 50px;
+    display: block;
+    float: left;
+}

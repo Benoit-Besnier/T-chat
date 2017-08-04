@@ -1,0 +1,30 @@
+extends layout
+
+block content
+
+    div(id="left-bar", ng-controller="Menu")
+
+    div(id="message-block", ng-controller="Messages")
+        ul(id="messages", class='messageBox')
+
+    div(id="bottom-bar", ng-controller="Input")
+        div(id="disconnect", class='button-bb')
+            button() Off
+
+        div(id="message-input")
+            //md-content(md-theme="custom")
+            md-input-container(class="md-block")
+                label Message
+                input(ng-model="message.content", autocomplete="off", key-bind="sendMessage()", key=13)
+
+        div(id="emote-button", class='button-bb')
+            button() Emote
+
+        div(id="take-picture", class='button-bb')
+            button() Picture
+
+        div(id="join-file", class='button-bb')
+            button() File
+
+        div(id="send-button", class='button-bb')
+            button() Send
