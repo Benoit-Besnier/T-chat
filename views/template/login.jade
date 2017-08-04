@@ -1,0 +1,29 @@
+//
+   Created by Benoit on 04/08/2017.
+
+md-dialog(aria-label="Mango (Fruit)")
+    form(ng-cloak)
+        md-toolbar
+            div(class="md-toolbar-tools")
+                h2 Connection
+                span(flex)
+
+        md-dialog-content
+            div(class="md-dialog-content")
+                h2 Welcome into T-Chat.
+                br
+                h3 We would like that you choose a username. How could other know who you are if you simply are anonymous !?
+                br
+                form(name="connection", novalidate)
+                    md-input-container(class="md-block")
+                        label Username
+                        input(type="text", name="username", ng-model="username", autocomplete="off",
+                        ng-minlength="3", md-maxlength="20", key-bind="sendUsername()", key=13 , required, autofocus)
+                        div(ng-messages="connection.username.$error", ng-show="connection.username.$touched", multiple, md-auto-hide="false")
+                            div(ng-message="required") Username is required.
+                            div(ng-message="minlength") Come on ! The username has to be more than 1 character long.
+                            div(ng-message="md-maxlength") The name has to be less than 20 characters long.
+
+        md-dialog-actions(layout="row")
+            span(flex)
+            md-button(ng-click="sendUsername()") Send

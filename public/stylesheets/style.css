@@ -1,5 +1,6 @@
 html {
-    overflow: hidden;
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
 }
 
 body {
@@ -56,13 +57,13 @@ body { font: 13px Helvetica, Arial; }
 }
 
 .message-from-current-user {
-    margin-left: 30px;
+    margin-left: calc(20% - 30px);
 
     background-color: rgba(255, 255, 255, 0.50);
 }
 
 .message-from-another-user {
-    margin-left: calc(20% - 30px);
+    margin-left: 30px;
 
     background-color: rgba(0, 255, 0, 0.50);
 }

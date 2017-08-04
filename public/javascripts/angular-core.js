@@ -5,8 +5,9 @@
 var App = angular.module('App', [
     "ngAnimate",
     "ngAria",
+    "ngMessages",
     "ngMaterial",
-    "AppController"
+    "AppController",
 ]);
 
 App.config(["$mdThemingProvider",
