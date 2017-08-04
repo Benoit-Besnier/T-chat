@@ -6,6 +6,10 @@ block content
 
     div(id="message-block", ng-controller="Messages")
         ul(id="messages", class='messageBox')
+        div(id="typing", class='typingTracker')
+            div(class="loading-container")
+                img(class="animated-gif", src="/images/edit_user1600.png")
+            div(class="counter-writers") {{counter}}
 
     div(id="bottom-bar", ng-controller="Input")
         div(id="disconnect", class='button-bb')
@@ -15,7 +19,7 @@ block content
             //md-content(md-theme="custom")
             md-input-container(class="md-block")
                 label Message
-                input(ng-model="message.content", autocomplete="off", key-bind="sendMessage()", key=13)
+                input(ng-model="message.content", autocomplete="off", ng-keyup="inputWatcher($event)")
 
         div(id="emote-button", class='button-bb')
             button() Emote

@@ -63,3 +63,60 @@ App.directive("messageBox", ['$compile', '$window', 'msgBus',
         }
     }
 ]);
+
+App.directive("typingTracker", ['$compile', 'msgBus',
+    function ($compile, msgBus) {
+        return {
+            restrict: "C",
+            link: function (scope, element, attr) {
+                var writers = [];
+                scope.counter = writers.length;
+
+                msgBus.onMsg('typingTracker.add', function (event, data) {
+                    addWriter(data);
+                }, scope);
+
+                msgBus.onMsg('typingTracker.remove', function (event, data) {
+                    removeWriter(data);
+                }, scope);
+
+                function addWriter (msg) {
+                    var i, l, item;
+
+                    for (i = 0, l = writers.length; i < l; ++i) {
+                        item = writers[i];
+                        if (msg.id === item.id)
+                            return;
+                    }
+
+                    writers.push(msg);
+                    updateTracker();
+                }
+
+                function removeWriter (msg) {
+                    var i, l, item;
+
+                    for (i = 0, l = writers.length; i < l; ++i) {
+                        item = writers[i];
+                        if (msg.id === item.id) {
+                            writers.splice(i, 1);
+                            updateTracker();
+                            return;
+                        }
+                    }
+                }
+                
+                function updateTracker() {
+                    var elem = angular.element(element);
+                    var counter = elem.find('.counter-writers');
+                    var state = "";
+
+                    console.log(writers.length);
+                    if (writers.length < 1) state = "none"; else state = "block";
+                    elem.css('display', state);
+                    scope.counter = writers.length;
+                }
+            }
+        }
+    }
+]);

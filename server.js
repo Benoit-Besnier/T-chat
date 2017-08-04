@@ -75,7 +75,7 @@ var server = http.createServer(app);
 
 var io = require('socket.io')(server);
 
-io.on('connection', function(socket){
+io.on('connection', function (socket){
     console.log('[SOCKET-IO][NEW] New connection established. Socket : [' + socket.id + ']');
     socket.emit('connection.link', {id: "<0x00>", username: "System", content: socket.id});
 
@@ -85,18 +85,26 @@ io.on('connection', function(socket){
         user = users.addUser(msg.id, msg.content);
 
         if (user !== null) {
-            socket.emit('connection.connected', {id: "<0x00>", username: "System", success: true, content: socket.id});
+            socket.emit('connection.connected', {id: "<0x00>", username: "System", success: true, content: {id: socket.id, username: user.name} } );
             console.log('[SOCKET-IO][EVENT][CONNECT] New user connected into T-Chat. User : [' + user.name + ']. Socket : [' + socket.id + ']');
             io.emit('chat message', {id: "<0x00>", username: "System", content: user.name + ' is now connected'});
         } else
             socket.emit('connection.connected', {id: "<0x00>", username: "System", success: false, content: "Please, try again."});
     });
 
-    socket.on('chat message', function(msg){
+    socket.on('chat.typing.start', function (msg) {
+        socket.broadcast.emit('chat.typing.start', msg);
+    });
+
+    socket.on('chat.typing.end', function (msg) {
+        socket.broadcast.emit('chat.typing.end', msg);
+    });
+
+    socket.on('chat message', function (msg){
         io.emit('chat message', msg);
     });
 
-    socket.on('disconnect', function(){
+    socket.on('disconnect', function (){
         var user;
 
         user = users.removeUser(socket.id);

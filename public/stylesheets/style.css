@@ -5,19 +5,13 @@ html {
 
 body {
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font: 13px Helvetica, Arial; }
-
 #messages { list-style-type: none; margin: 0; padding: 0; }
-/*#messages li { padding: 5px 10px; }*/
-/*#messages li:nth-child(odd) { background: rgba(255, 255, 255, 0.50); }*/
 
 /***
  **
@@ -71,6 +65,32 @@ body { font: 13px Helvetica, Arial; }
 .message-from-system-user {
     margin-left: 10%;
     background-color: rgba(0, 0, 0, 0.50);
+}
+
+.typingTracker {
+    display: none;
+}
+.loading-container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+.animated-gif {
+    margin: 0 5px 0 0;
+    width: 50px;
+    background-color: rgba(0, 0, 0, 0.21);
+    border-radius: 5%;
+}
+
+.counter-writers {
+    position: absolute;
+
+    font-weight: 700;
+    bottom: 35px;
+    right: 7px;
+    color: red;
+    font-size: medium;
+
 }
 
 /***
